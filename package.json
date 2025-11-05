@@ -1,0 +1,14 @@
+{
+  "name": "encryption_data_key",
+  "version": "1.0.0",
+  "description": "Hybrid encryption demo using RSA + AES in Node.js",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.21.2",
+    "fs-extra": "^11.3.2"
+  }
+}

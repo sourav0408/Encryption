@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Receiver — Secure Payload Console</title>
+    <style>
+        :root{
+            --bg:#0b0f1a;
+            --card:#101826;
+            --accent:#06b6d4;
+            --accent-2:#3b82f6;
+            --muted:#a0a9b8;
+            --glass:rgba(255,255,255,0.04);
+            font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+        }
+        *{box-sizing:border-box;}
+        html,body{height:100%; margin:0;}
+        body{
+            background:radial-gradient(circle at top left, var(--card), var(--bg) 90%);
+            color:#e7eef6;
+            display:flex; align-items:center; justify-content:center; padding:32px;
+        }
+
+        .container{
+            width:100%; max-width:960px; background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+            border-radius:18px; padding:32px; box-shadow:0 8px 32px rgba(0,0,0,0.6);
+            display:grid; grid-template-columns:1fr 360px; gap:24px; align-items:start;
+        }
+
+        header{display:flex; gap:14px; align-items:center; margin-bottom:16px;}
+        .logo{width:52px; height:52px; border-radius:12px; background:linear-gradient(135deg,var(--accent),var(--accent-2)); display:grid; place-items:center; font-weight:700; font-size:20px;}
+        h1{margin:0; font-size:20px;}
+        p.lead{margin:4px 0 0; color:var(--muted); font-size:13px;}
+
+        .panel{background:var(--card); border-radius:14px; padding:20px; border:1px solid rgba(255,255,255,0.05);}
+        .actions{display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;}
+        button.btn{
+            appearance:none; border:none; padding:12px 16px; border-radius:10px; font-weight:600; cursor:pointer;
+            font-size:14px; display:inline-flex; gap:10px; align-items:center; justify-content:center;
+            background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            color:var(--accent); border:1px solid rgba(6,182,212,0.3);
+            transition:all .15s ease;
+        }
+        button.btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:#fff;}
+        button.btn:active{transform:translateY(1px);}
+
+        textarea{
+            width:100%; margin-top:12px; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);
+            background:rgba(255,255,255,0.02); color:#e6eef6; resize:vertical; font-family:inherit; font-size:14px;
+        }
+        input[type=file]{margin-top:10px; color:#d7e2f0; font-size:13px;}
+
+        .status{margin-top:12px; color:var(--muted); font-size:13px;}
+        .output{margin-top:10px; font-size:13px; color:#d7f3ff; min-height:80px; white-space:pre-wrap; font-family:ui-monospace,Menlo,Monaco,monospace;}
+
+        .meta{display:flex; flex-direction:column; gap:12px;}
+        .card-sm{padding:14px; border-radius:10px; background:var(--glass); border:1px solid rgba(255,255,255,0.03)}
+        .kv{font-size:13px; color:var(--muted);}
+        .monos{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,monospace; font-size:13px; color:#cde9ff; word-break:break-all;}
+
+        .footer{grid-column:1 / -1; display:flex; justify-content:space-between; margin-top:18px; color:var(--muted); font-size:13px;}
+
+        @media (max-width:880px){
+            .container{grid-template-columns:1fr;}
+            .meta{order:-1;}
+        }
+    </style>
+</head>
+<body>
+<div class="container" role="main" aria-labelledby="title">
+    <div>
+        <header>
+            <div class="logo">RC</div>
+            <div>
+                <h1 id="title">Receiver — Secure Payload Console</h1>
+                <p class="lead">Fetch, decrypt and handle payloads with end-to-end AES encryption.</p>
+            </div>
+        </header>
+
+        <section class="panel">
+            <h2 class="small" style="margin:0 0 8px 0;">Actions</h2>
+            <div class="actions">
+                <button id="fetchKeyBtn" class="btn primary">🔑 Fetch Encrypted Key</button>
+                <button id="decryptKeyBtn" class="btn">🧩 Decrypt AES Key</button>
+                <button id="encryptSendBtn" class="btn">📤 Encrypt &amp; Send Payload</button>
+            </div>
+
+            <textarea id="message" rows="4" placeholder="Type your message..."></textarea>
+            <input type="file" id="fileInput" />
+            <p id="status" class="status">Idle</p>
+            <div id="output" class="output"></div>
+        </section>
+
+        <div class="footer">
+            <div>Mode: <span class="small" id="mode">Development</span></div>
+            <div class="small">Built for clarity • Secure • Modern UI</div>
+        </div>
+    </div>
+
+    <aside class="meta">
+        <div class="card-sm">
+            <div class="kv">Received Encrypted Key</div>
+            <div id="encKey" class="monos">—</div>
+        </div>
+
+        <div class="card-sm">
+            <div class="kv">Decrypted AES Key</div>
+            <div id="decKey" class="monos">—</div>
+        </div>
+
+        <div class="card-sm">
+            <div class="kv">Info</div>
+            <div class="small">This Receiver interface is styled to match the Sender page. It connects to receiver.js for decryption, encryption, and payload handling.</div>
+        </div>
+    </aside>
+</div>
+
+<script src="receiver.js"></script>
+</body>
+</html>
