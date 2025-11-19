@@ -20,30 +20,36 @@
             margin:0; background:linear-gradient(180deg,var(--bg),#031022 120%); color:#e6eef6;
             display:flex; align-items:center; justify-content:center; padding:32px;
         }
-
         .container{
             width:100%; max-width:980px; border-radius:16px; padding:28px;
             background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
             box-shadow: 0 8px 30px rgba(2,6,23,0.6);
             display:grid; grid-template-columns: 1fr 360px; gap:24px; align-items:start;
         }
-
         header{display:flex; gap:16px; align-items:center}
         .logo{width:56px; height:56px; border-radius:12px; background:linear-gradient(135deg,var(--accent),var(--accent-2)); display:grid; place-items:center; font-weight:700; font-size:20px}
         h1{margin:0; font-size:20px}
         p.lead{margin:4px 0 0; color:var(--muted); font-size:13px}
 
         .panel{background:linear-gradient(180deg,var(--card), rgba(255,255,255,0.02)); border-radius:12px; padding:18px;}
-
-        .actions{display:flex; gap:12px; margin-top:16px}
+        .actions{display:flex; gap:12px; margin-top:16px; flex-wrap: wrap;}
         button.btn{
             appearance:none; border:0; padding:12px 16px; border-radius:10px; font-weight:600; cursor:pointer; display:inline-flex; gap:10px; align-items:center; justify-content:center; font-size:14px;
             background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); color:var(--accent-2); border:1px solid rgba(59,130,246,0.12);
             transition:transform .12s ease, box-shadow .12s ease;
         }
         button.btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:white; box-shadow: 0 8px 22px rgba(59,130,246,0.12)}
-        button.btn:active{transform:translateY(1px)}
-        button.btn.ghost{background:transparent; color:var(--muted); border:1px dashed rgba(255,255,255,0.04)}
+        button.btn.ghost{background:transparent; color:var(--muted); border:1px dashed rgba(255,255,255,0.04);}
+        button.btn.reset{
+            background: linear-gradient(90deg, #ef4444, #f87171);
+            color: white;
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.2);
+            transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+        }
+        button.btn.reset:hover{box-shadow: 0 8px 28px rgba(239, 68, 68, 0.4); transform:translateY(-1px);}
+        button.btn.reset:active{transform:translateY(1px); box-shadow: 0 4px 16px rgba(239, 68, 68, 0.2);}
+        button.btn:active{transform:translateY(1px);}
 
         .status{margin-top:12px; color:var(--muted); font-size:13px}
 
@@ -60,6 +66,10 @@
 
         .spinner{width:18px;height:18px;border-radius:50%;border:3px solid rgba(255,255,255,0.08);border-top-color:var(--accent); animation:spin .95s linear infinite; display:inline-block}
         @keyframes spin{to{transform:rotate(360deg)}}
+
+        #notificationBox{
+            display:none; padding:10px; background:#1e293b; border:1px solid #334155; color:#38bdf8; margin-bottom:12px; border-radius:8px; font-size:14px; transition:all 0.3s ease;
+        }
 
         @media (max-width:880px){
             .container{grid-template-columns:1fr;}
@@ -84,6 +94,7 @@
                 <button id="sendKeyBtn" class="btn primary">🔐 Generate &amp; Send AES Key</button>
                 <button id="fetchPayloadBtn" class="btn">📩 Fetch &amp; Decrypt Payload</button>
                 <button id="copyKeyBtn" class="btn ghost">📋 Copy Key</button>
+                <button id="resetBtn" class="btn reset">🔄 Reset</button>
             </div>
 
             <div class="status" id="status">Ready.</div>
@@ -108,8 +119,7 @@
         </div>
 
         <div class="card-sm">
-            <div class="kv">Info</div>
-            <div class="small">Connect your own backend API (e.g., /api/send-key, /api/payload) using the external sender.js file.</div>
+            <div id="notificationBox"></div>
         </div>
     </aside>
 </div>

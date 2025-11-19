@@ -52,6 +52,24 @@ app.get("/api/payload", (req, res) => {
     res.json(payload);
 });
 
+// Clear payload.json
+app.post("/api/clear-payload", (req, res) => {
+    const filePath = path.join(__dirname, "data/payload.json");
+
+    // Overwrite file with empty object
+    fs.writeJson(filePath, {}, { spaces: 2 })
+        .then(() => {
+            payload = null; // also clear in-memory payload
+            console.log("✅ payload.json cleared.");
+            res.json({ ok: true, message: "Payload cleared successfully." });
+        })
+        .catch(err => {
+            console.error("❌ Failed to clear payload.json:", err);
+            res.status(500).json({ error: "Failed to clear payload." });
+        });
+});
+
+
 // Run the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
