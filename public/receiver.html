@@ -50,6 +50,24 @@
             background:rgba(255,255,255,0.02); color:#e6eef6; resize:vertical; font-family:inherit; font-size:14px;
         }
         input[type=file]{margin-top:10px; color:#d7e2f0; font-size:13px;}
+        button.btn.reset {
+            background: linear-gradient(90deg, #ef4444, #f87171);
+            color: white;
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.2);
+            transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+        }
+
+        button.btn.reset:hover {
+            box-shadow: 0 8px 28px rgba(239, 68, 68, 0.4);
+            transform: translateY(-1px);
+        }
+
+        button.btn.reset:active {
+            transform: translateY(1px);
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.2);
+        }
+
 
         .status{margin-top:12px; color:var(--muted); font-size:13px;}
         .output{margin-top:10px; font-size:13px; color:#d7f3ff; min-height:80px; white-space:pre-wrap; font-family:ui-monospace,Menlo,Monaco,monospace;}
@@ -64,6 +82,7 @@
         @media (max-width:880px){
             .container{grid-template-columns:1fr;}
             .meta{order:-1;}
+
         }
     </style>
 </head>
@@ -84,6 +103,7 @@
                 <button id="fetchKeyBtn" class="btn primary">🔑 Fetch Encrypted Key</button>
                 <button id="decryptKeyBtn" class="btn">🧩 Decrypt AES Key</button>
                 <button id="encryptSendBtn" class="btn">📤 Encrypt &amp; Send Payload</button>
+                <button id="resetBtnR" class="btn reset">🔄 Reset</button>
             </div>
 
             <textarea id="message" rows="4" placeholder="Type your message..."></textarea>
@@ -110,9 +130,14 @@
         </div>
 
         <div class="card-sm">
-            <div class="kv">Info</div>
-            <div class="small">This Receiver interface is styled to match the Sender page. It connects to receiver.js for decryption, encryption, and payload handling.</div>
+            <div class="kv">Status</div>
+            <div id="statusR" class="small" style="white-space: pre-wrap;">Idle</div>
         </div>
+        <div class="card-sm">
+            <div id="notificationBoxR"></div>
+        </div>
+
+
     </aside>
 </div>
 

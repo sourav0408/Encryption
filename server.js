@@ -37,8 +37,13 @@ app.get("/api/encrypted-key", (req, res) => {
     if (!encryptedKey) return res.status(404).json({ error: "No key found" });
     res.json({ encKey: encryptedKey });
 });
+app.post("/api/clear-encrypted-key", (req, res) => {
+    encryptedKey = null;
+    console.log("✅ Encrypted key cleared");
+    res.json({ success: true, message: "Encrypted key cleared" });
+});
 
-// Receiver sends encrypted payload (message/file)
+// Receiver sends encrypted payload (message/file)lollll
 app.post("/api/payload", (req, res) => {
     payload = req.body;
     fs.writeJsonSync(path.join(__dirname, "data/payload.json"), payload, { spaces: 2 });

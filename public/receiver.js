@@ -1,6 +1,9 @@
 console.log("Receiver script loaded");
 
 let aesKey;
+let counterR=1;
+//let gtextR = "Ready.\n"
+let gtextR = "Ready.\n";
 
 // --- Utility Functions ---
 function ab2b64(buffer) {
@@ -24,15 +27,45 @@ function b642ab(base64) {
 async function importRSAPrivateKey(pem) {
     const b64 = pem.replace(/-----BEGIN PRIVATE KEY-----|-----END PRIVATE KEY-----|\s+/g, "");
     const der = b642ab(b64);
-    return crypto.subtle.importKey("pkcs8", der, { name: "RSA-OAEP", hash: "SHA-256" }, false, ["decrypt"]);
+    return crypto.subtle.importKey(
+        "pkcs8",                          // Format: PKCS#8 (standard for private keys)
+        der,                              // The binary key data
+        { name: "RSA-OAEP", hash: "SHA-256" },  // Algorithm config
+        false,                            // Not extractable (can't export key later)
+        ["decrypt"]                       // Only allow decryption operations
+    );
 }
 
 // --- UI Helper ---
 function setStatus(text, color = "#06b6d4") {
+    gtextR += `${counterR}. ${text}\n`;
+    counterR++;
+
     const el = document.getElementById("status");
+    const elR = document.getElementById("statusR");
+
+    elR.textContent = gtextR;
     el.textContent = text;
     el.style.color = color;
 }
+
+
+///notification for AES key
+async function checkForAESKey() {
+    const res = await fetch("/api/encrypted-key");
+    if (res.ok) {
+        // Payload exists
+        showNotification("📩 New secure message received!");
+    }
+}
+
+function showNotification(msg) {
+    const box = document.getElementById("notificationBoxR");
+    box.innerText = msg;
+    box.style.display = "block";
+}
+setInterval(checkForAESKey, 500);
+
 
 function shortKeyDisplay(b64) {
     if (!b64) return "—";
@@ -55,6 +88,11 @@ async function fetchEncryptedKey() {
         console.error(err);
         setStatus("❌ Failed to fetch encrypted key", "#f87171");
     }
+}
+function clearEncryptedKey() {
+    localStorage.removeItem("encKey");
+    document.getElementById("encKey").textContent = "Cleared";
+    setStatus("🗑️ Encrypted key cleared", "#10b981");
 }
 
 // --- Decrypt AES Key ---
@@ -140,3 +178,53 @@ window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("decryptKeyBtn").onclick = decryptAESKey;
     document.getElementById("encryptSendBtn").onclick = encryptAndSendPayload;
 });
+// Clear when user closes tab/navigates away
+window.addEventListener("beforeunload", () => {
+    localStorage.removeItem("encKey");
+});
+
+async function resetToolR() {
+    // Clear AES key
+    aesKey = null;
+
+    // Reset status messages
+    gtextR = "Ready.\n";
+    counter = 1;
+    document.getElementById("statusR").innerText = gtextR;
+
+    document.getElementById("decKey").innerText = "—";
+
+    // Clear last key display
+    document.getElementById("encKey").innerText = "—";
+    //alert("hello world!");
+    // Clear output and any file download links
+    /*const output = document.getElementById("output");
+    output.innerText = "";*/
+    const links = output.querySelectorAll("a");
+    links.forEach(link => link.remove());
+
+    // Hide notification box
+    const notif = document.getElementById("notificationBoxR");
+    if (notif) {
+        notif.innerText = "dbdfbdfbdb";
+        notif.style.display = "none";
+    }
+
+    // Clear payload.json on the server
+    try {
+        const resKey = await fetch("/api/clear-encrypted-key", { method: "POST" });
+        if (!resKey.ok) throw new Error("Failed to clear encrypted key");
+        localStorage.removeItem("encKey");
+        const res = await fetch("/api/clear-payload", { method: "POST" });
+        if (!res.ok) throw new Error("Failed to clear payload.json");
+        console.log("✅ payload.json cleared on server.");
+    } catch (err) {
+        console.error("❌ Error clearing payload.json:", err);
+    }
+
+    // Update status
+    setStatus("Tool has been reset. You can start from the beginning.");
+}
+
+// Attach to button
+document.getElementById("resetBtnR").onclick = resetToolR;

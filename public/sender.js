@@ -14,14 +14,12 @@ function b642ab(base64) {
 }
 
 
-
 function setStatus(text) {
     gtext += `${counter}. ${text}\n`;
     counter++;
 
     document.getElementById("detailedStatus").innerText = gtext;
 }
-
 
 // ---- RSA Import ----
 async function importRSAPublicKey(pem) {
@@ -45,28 +43,33 @@ async function sendKey() {
         true,
         ["encrypt", "decrypt"]
     );
+
     const rawKey = await crypto.subtle.exportKey("raw", aesKey);
     const rawKeyB64 = ab2b64(rawKey);
+   // console.log("aes KEY" + rawKeyB64);
 
     setStatus("Loading receiver public key...");
     const pubPem = await fetch("/keys/receiver_public.pem").then(r => r.text());
     const pubKey = await importRSAPublicKey(pubPem);
-
     setStatus("Encrypting AES key...");
     const encKey = await crypto.subtle.encrypt({ name: "RSA-OAEP" }, pubKey, rawKey);
     const encKeyB64 = ab2b64(encKey);
+    //setStatus("Receiver public key: " + encKeyB64);
 
     setStatus("Sending encrypted AES key...");
+
     await fetch("/api/send-key", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ encKey: encKeyB64 })
     });
 
-    document.getElementById("status").textContent = "✅ AES key encrypted and sent!";
+    //document.getElementById("status").textContent = "AES key encrypted and sent!";
     document.getElementById("lastKey").textContent = rawKeyB64;
     setStatus("AES key sent successfully.");
 }
+
+
 ///notification for paylod ready
 async function checkForPayload() {
     const res = await fetch("/api/payload");
