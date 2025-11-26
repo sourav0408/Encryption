@@ -206,7 +206,7 @@ async function resetToolR() {
     // Hide notification box
     const notif = document.getElementById("notificationBoxR");
     if (notif) {
-        notif.innerText = "dbdfbdfbdb";
+        notif.innerText = "";
         notif.style.display = "none";
     }
 
