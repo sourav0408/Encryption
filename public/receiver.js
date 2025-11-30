@@ -171,12 +171,37 @@ async function encryptAndSendPayload() {
         setStatus("❌ Failed to send payload: " + err.message, "#f87171");
     }
 }
+//pem file upload
 
+async function uploadPem() {
+    const fileInput = document.getElementById("pemFile");
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert("Select a PEM file first!");
+        return;
+    }
+
+    const fd = new FormData();
+    fd.append("pem", file);
+
+    const res = await fetch("/upload-pem", {
+        method: "POST",
+        body: fd
+    });
+
+    const msg = await res.text();
+    alert(msg);
+
+    // Clear the file input after successful upload
+    fileInput.value = "";
+}
 // --- Button bindings ---
 window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("fetchKeyBtn").onclick = fetchEncryptedKey;
     document.getElementById("decryptKeyBtn").onclick = decryptAESKey;
     document.getElementById("encryptSendBtn").onclick = encryptAndSendPayload;
+    document.getElementById("uploadPemBtn").onclick = uploadPem;
 });
 // Clear when user closes tab/navigates away
 window.addEventListener("beforeunload", () => {

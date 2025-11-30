@@ -2,12 +2,17 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const fs = require("fs-extra");
 const path = require("path");
+const fileUpload = require("express-fileupload");
 
 const app = express();
+
+// Middleware
 app.use(bodyParser.json({ limit: "100mb" }));
+app.use(fileUpload());
 app.use(express.static("public"));
 app.use("/keys", express.static("keys"));
 
+// Variables
 let encryptedKey = null;
 let payload = null;
 
@@ -30,6 +35,23 @@ app.post("/api/send-key", (req, res) => {
     encryptedKey = req.body.encKey;
     console.log("Encrypted AES key received and saved.");
     res.json({ ok: true });
+});
+//file upload
+
+app.post("/upload-pem", (req, res) => {
+
+    if (!req.files || !req.files.pem) {
+        return res.status(400).send("No PEM file uploaded");
+    }
+
+    const pemFile = req.files.pem;
+    const savePath = path.join(__dirname, "keys", pemFile.name);
+
+    pemFile.mv(savePath, err => {
+        if (err) return res.status(500).send("Error saving PEM file");
+
+        res.send(`PEM saved successfully at ${savePath}`);
+    });
 });
 
 // Receiver fetches encrypted AES key

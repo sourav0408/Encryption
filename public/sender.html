@@ -26,12 +26,25 @@
             box-shadow: 0 8px 30px rgba(2,6,23,0.6);
             display:grid; grid-template-columns: 1fr 360px; gap:24px; align-items:start;
         }
-        header{display:flex; gap:16px; align-items:center}
-        .logo{width:56px; height:56px; border-radius:12px; background:linear-gradient(135deg,var(--accent),var(--accent-2)); display:grid; place-items:center; font-weight:700; font-size:20px}
-        h1{margin:0; font-size:20px}
-        p.lead{margin:4px 0 0; color:var(--muted); font-size:13px}
 
-        .panel{background:linear-gradient(180deg,var(--card), rgba(255,255,255,0.02)); border-radius:12px; padding:18px;}
+        header{
+            display:flex; gap:16px; align-items:flex-start;
+        }
+        .logo{
+            width:56px; height:56px; border-radius:12px;
+            background:linear-gradient(135deg,var(--accent),var(--accent-2));
+            display:grid; place-items:center; font-weight:700; font-size:20px;
+            flex-shrink:0;
+        }
+        .header-text{
+            display:flex; flex-direction:column;
+            gap:8px;
+            flex:1;
+        }
+        h1{margin:0; font-size:20px}
+        p.lead{margin:0; color:var(--muted); font-size:13px}
+
+        .panel{background:linear-gradient(180deg,var(--card), rgba(255,255,255,0.02)); border-radius:12px; padding:18px; margin-top:16px;}
         .actions{display:flex; gap:12px; margin-top:16px; flex-wrap: wrap;}
         button.btn{
             appearance:none; border:0; padding:12px 16px; border-radius:10px; font-weight:600; cursor:pointer; display:inline-flex; gap:10px; align-items:center; justify-content:center; font-size:14px;
@@ -75,6 +88,59 @@
             .container{grid-template-columns:1fr;}
             .meta{order:-1}
         }
+
+        /* PEM Upload Styling */
+        .pem-upload {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-top:16px;
+            width:100%; /* Full width of parent */
+            max-width:100%;
+        }
+        .pem-upload input[type="file"] {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: #e6eef6;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .pem-upload input[type="file"]::-webkit-file-upload-button { visibility: hidden; }
+        .pem-upload input[type="file"]::before {
+            content: "Choose PEM...";
+            display: inline-block;
+            background: linear-gradient(90deg, #3b82f6, #06b6d4);
+            border-radius: 8px;
+            padding: 6px 12px;
+            outline: none;
+            white-space: nowrap;
+            cursor: pointer;
+            color: white;
+            font-weight: 600;
+            margin-right: 8px;
+            font-size: 13px;
+        }
+        .pem-upload input[type="file"]:hover::before { opacity: 0.9; }
+        .pem-upload button {
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(90deg, #3b82f6, #06b6d4);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .pem-upload button:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.3); }
+        .pem-upload button:active { transform: translateY(1px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2); }
+
+        /* Responsive adjustments */
+        @media (max-width:500px) { .pem-upload { flex-direction: column; align-items: stretch; } .pem-upload button { width:100%; } }
+
     </style>
 </head>
 <body>
@@ -82,12 +148,19 @@
     <div>
         <header>
             <div class="logo">SS</div>
-            <div>
+            <div class="header-text">
                 <h1 id="title">Sender — Secure Key Tool</h1>
                 <p class="lead">Generate a one-time AES key and send it securely to the receiver. Then fetch and decrypt payloads in a single click.</p>
+
+                <!-- PEM Upload -->
+
             </div>
         </header>
-
+        <div class="pem-upload">
+            <input type="file" id="pemFile" accept=".pem">
+            <button onclick="uploadPem()">Upload PEM</button>
+        </div>
+        <br>
         <section class="panel" aria-labelledby="actions">
             <h2 id="actions" class="small" style="margin:0 0 8px 0;">Actions</h2>
             <div class="actions">

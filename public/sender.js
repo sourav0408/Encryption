@@ -126,7 +126,31 @@ async function resetTool() {
     // Update status
     setStatus("Tool has been reset. You can start from the beginning.");
 }
+//pem file upload
 
+async function uploadPem() {
+    const fileInput = document.getElementById("pemFile");
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert("Select a PEM file first!");
+        return;
+    }
+
+    const fd = new FormData();
+    fd.append("pem", file);
+
+    const res = await fetch("/upload-pem", {
+        method: "POST",
+        body: fd
+    });
+
+    const msg = await res.text();
+    alert(msg);
+
+    // Clear the file input after successful upload
+    fileInput.value = "";
+}
 // Attach to button
 document.getElementById("resetBtn").onclick = resetTool;
 
@@ -206,6 +230,7 @@ async function fetchAndDecryptPayload() {
 window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("sendKeyBtn").onclick = sendKey;
     document.getElementById("fetchPayloadBtn").onclick = fetchAndDecryptPayload;
+    document.getElementById("uploadPemBtn").onclick = uploadPem;
     setStatus("Ready.");
 });
 
