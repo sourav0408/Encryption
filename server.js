@@ -29,13 +29,6 @@ app.get("/sender", (req, res) => {
 app.get("/receiver", (req, res) => {
     res.sendFile(path.join(__dirname, "public/receiver.html"));
 });
-
-// Sender sends encrypted AES key
-app.post("/api/send-key", (req, res) => {
-    encryptedKey = req.body.encKey;
-    console.log("Encrypted AES key received and saved.");
-    res.json({ ok: true });
-});
 //file upload
 
 app.post("/upload-pem", (req, res) => {
@@ -55,18 +48,40 @@ app.post("/upload-pem", (req, res) => {
     });
 });
 
+// Sender sends encrypted AES key
+app.post("/api/send-key", (req, res) => {
+    //encryptedKey = req.body.encKey;
+    encryptedKey = req.body;
+    fs.writeJsonSync(path.join(__dirname, "data/encrypted_key.json"), encryptedKey, { spaces: 2 });
+    console.log("Encrypted AES key received and saved.2");
+    res.json({ ok: true });
+});
+
+
 // Receiver fetches encrypted AES key
 app.get("/api/encrypted-key", (req, res) => {
     if (!encryptedKey) return res.status(404).json({ error: "No key found" });
-    res.json({ encKey: encryptedKey });
+    //res.json({ encKey: encryptedKey });
+    res.json(encryptedKey);
 });
 app.post("/api/clear-encrypted-key", (req, res) => {
-    encryptedKey = null;
-    console.log("✅ Encrypted key cleared");
-    res.json({ success: true, message: "Encrypted key cleared" });
+
+    const filePathKey = path.join(__dirname, "data/encrypted_key.json");
+
+    // Overwrite file with empty object
+    fs.writeJson(filePathKey, {}, { spaces: 2 })
+        .then(() => {
+            encryptedKey = null // also clear in-memory encryptedKey
+            console.log("✅ payload.json clearedss.");
+            res.json({ ok: true, message: "encrypted Key cleared successfully." });
+        })
+        .catch(err => {
+            console.error("❌ Failed to clear payload.json:", err);
+            res.status(500).json({ error: "Failed to clear encrypted Key." });
+        });
 });
 
-// Receiver sends encrypted payload (message/file)lollll
+// Receiver sends encrypted payload (message/file)
 app.post("/api/payload", (req, res) => {
     payload = req.body;
     fs.writeJsonSync(path.join(__dirname, "data/payload.json"), payload, { spaces: 2 });

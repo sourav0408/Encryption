@@ -57,11 +57,14 @@ async function sendKey() {
     //setStatus("Receiver public key: " + encKeyB64);
 
     setStatus("Sending encrypted AES key...");
-
+    const encriptedKey = {
+        encKey: encKeyB64
+    };
     await fetch("/api/send-key", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ encKey: encKeyB64 })
+       // body: JSON.stringify({ encKey: encKeyB64 })
+        body: JSON.stringify(encriptedKey)
     });
 
     //document.getElementById("status").textContent = "AES key encrypted and sent!";
@@ -116,9 +119,12 @@ async function resetTool() {
 
     // Clear payload.json on the server
     try {
-        const res = await fetch("/api/clear-payload", { method: "POST" });
-        if (!res.ok) throw new Error("Failed to clear payload.json");
+        const res1 = await fetch("/api/clear-payload", { method: "POST" });
+        const res2 = await fetch("/api/clear-encrypted-key", { method: "POST" });
+        if (!res1.ok) throw new Error("Failed to clear payload.json");
         console.log("✅ payload.json cleared on server.");
+        if (!res1.ok) throw new Error("Failed to clear payload.json");
+        console.log("✅ encriptedKey.json cleared on server.");
     } catch (err) {
         console.error("❌ Error clearing payload.json:", err);
     }
