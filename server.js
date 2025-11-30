@@ -43,9 +43,10 @@ app.post("/upload-pem", (req, res) => {
     if (!req.files || !req.files.pem) {
         return res.status(400).send("No PEM file uploaded");
     }
-
+    const pemName = req.body.pemName;
+    const newFileName = pemName+ ".pem";
     const pemFile = req.files.pem;
-    const savePath = path.join(__dirname, "keys", pemFile.name);
+    const savePath = path.join(__dirname, "keys", newFileName);
 
     pemFile.mv(savePath, err => {
         if (err) return res.status(500).send("Error saving PEM file");

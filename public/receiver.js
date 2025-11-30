@@ -184,6 +184,7 @@ async function uploadPem() {
 
     const fd = new FormData();
     fd.append("pem", file);
+    fd.append("pemName","receiver_private");
 
     const res = await fetch("/upload-pem", {
         method: "POST",
